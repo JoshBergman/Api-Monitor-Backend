@@ -1,26 +1,30 @@
 const express = require('express');
 const router = express.Router();
 
-const authController = require('../Controllers/user-auth-controller'); //logins in user, manages session ID, and manages user API data
-const userManagementController = require('../Controllers/user-management-controller'); //for users to manage their account information, change password, delete account, etc...
-const signupController = require('../Controllers/signup-controller'); //for new users to signup
-
-//? .../api/users/
-
-//!delete test call
-router.get('/', authController.test);
-
-// //*login & api list fetch
-// router.get('/api-list/:sid', authController); //fetches list of API's given the user session ID is valid
-
-// router.post('/'); //login to existing account returns session id to store in local storage
-
-// router.get('/validate/:sid'); //validates current session id
-
-// //*acount managing
+const authController = require('../Controllers/user-auth-controller');
+const userManagementController = require('../Controllers/user-management-controller');
+const signupController = require('../Controllers/signup-controller');
+const APIController = require('../Controllers/API-Manage-Controller');
 
 
-// //*new user signup
-// router.post('/signup', signupController); //makes new account given email isn't already used
+//*current route: .../api/users/new path here
+
+//API operations
+router.put('/list/new/:sid', APIController.addOne); //adds an API to list
+
+router.delete('/list/delete/:sid', APIController.deleteOne); //deletes an API to list
+
+router.get('/list/:sid', APIController.getAPIList); //returns API List
+
+//acount management
+router.get('/login/:loginString', authController.login); //returns API List + SID
+
+router.delete('/list/reset/:sid', userManagementController.resetAPIList); //resets API List
+
+router.post('/signup', signupController.newUser); //creates new user
+
+router.delete('/delete/:sid', userManagementController.deleteAccount); //deletes user
+
+
 
 module.exports = router;
