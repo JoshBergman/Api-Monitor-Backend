@@ -13,10 +13,14 @@ const deleteAccount = async (req, res, next) => {
 
     try {
         let result = await UserCollection.deleteOne({_id: sid});
-        res.json({msg:result});
+        if(result.deletedCount >= 1){
+            res.json({error: false});
+        } else {
+            throw new Error;
+        }
     }
     catch (err) {
-        res.json({msg: "Error Try Again Later"});
+        res.json({error: true});
     }
 };
 
@@ -25,10 +29,14 @@ const resetAPIList = async (req, res, next) => {
 
     try {
         let result = await UserCollection.updateOne({_id: sid}, {$set : {API: []}});
-        res.json({msg:result, deleted: true});
+        if(result.modifiedCount >= 1){
+            res.json({error: false});
+        } else {
+            throw new Error;
+        }
     }
     catch (err) {
-        res.json({deleted: false, msg: "Error Try Again Later"});
+        res.json({error: true});
     }
 };
 

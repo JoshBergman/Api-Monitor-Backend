@@ -21,6 +21,8 @@ router.get('/login/:loginString', authController.login); //returns API List + SI
 
 router.delete('/list/reset/:sid', userManagementController.resetAPIList); //resets API List
 
+router.put('/update/auth/:sid', authController.updatePassword); //updates password given SID and old password
+
 router.post('/signup', signupController.newUser); //creates new user
 
 router.delete('/delete/:sid', userManagementController.deleteAccount); //deletes user

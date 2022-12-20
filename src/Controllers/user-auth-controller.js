@@ -24,17 +24,43 @@ const login = async (req, res, next) => {
 
         //return sid if passwords match
         if (storedPassword === userPassword){
-            res.json({loggedIn: true, sid: storedId, APILIST: currApiList});
+            res.json({error: false, sid: storedId, APILIST: currApiList});
             return;
         } else {
-            res.json({loggedIn: false});
+            res.json({error: true});
             return;
         }
     }
     catch (err) {
-        res.json({msg: "Server error Try Again Later", loggedIn: false});
+        res.json({error: true});
         return;
     }
 };
 
+const updatePassword = async (req, res, next) => {
+    const sid = ObjectId(req.params.sid);
+    const oldPassword = req.body.oldPassword;
+    const newPassword = req.body.newPassword;
+
+    try {
+        const currPassword = await UserCollection.findOne({_id: sid}, {projection: {password: 1, _id: 0}});
+        //stored as { password: "password" }
+
+        if (currPassword.password === oldPassword) {
+            const response = await UserCollection.updateOne({_id: sid}, {$set: {password: newPassword}});
+            if (response.modifiedCount >= 1) {
+                res.json({error: false, msg: "Successfully updated password."});
+            } else {
+                res.json({error: true, msg: "Server failed to update password."});
+            }
+        } else {
+            res.json({error: true, msg: "Current password does not match."});
+        }
+
+    } catch (err) {
+        res.json({error: true, msg: "Server Error"});
+    }
+};
+
 exports.login = login;
+exports.updatePassword = updatePassword;

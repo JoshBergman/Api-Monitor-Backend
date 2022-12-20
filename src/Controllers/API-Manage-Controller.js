@@ -13,11 +13,11 @@ const getAPIList = async (req, res, next) => {
     const userId = ObjectId(sid);
 
     try {
-        let result = await UserCollection.findOne({ "_id" : userId }, {"API": 1}); //can't get projection to work
-        res.json({"API-LIST":result.API});
+        let result = await UserCollection.findOne({ "_id" : userId }, {projection: {"API": 1, _id: 0}});
+        res.json({error: false, "API-LIST":result.API});
     }
     catch (err) {
-        res.json({msg: "Error Try Again Later"});
+        res.json({error: true});
     }
 };
 
@@ -29,10 +29,10 @@ const addOne = async (req, res, next) => {
 
     try {
         let result = await UserCollection.updateOne({_id: userId}, {$push: {API: newAPI}});
-        res.json({modifiedCount: result.modifiedCount});
+        res.json({error: false});
     }
     catch (err) {
-        res.json({added: false});
+        res.json({error: true});
     }
 };
 
@@ -44,11 +44,10 @@ const deleteOne = async (req, res, next) => {
 
     try {
         let result = await UserCollection.updateOne({_id: userId}, {$pull: {API: {title: deleteTitle}}});
-        console.log(result);
-        res.json({quantityDeleted: result.modifiedCount});
+        res.json({error: false});
     }
     catch (err) {
-        res.json({deleted: false, err: err});
+        res.json({error: true});
     }
 };
 

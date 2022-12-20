@@ -9,12 +9,24 @@ const UserCollection = client.db(dbname).collection(collectionName);
 
 
 const addUser = async (req, res, next) => {
+    const newUser = {
+        email: req.body.email,
+        password: req.body.password,
+        API: []
+    };
+
+    for (let prop in newUser){
+        if(prop === null || undefined){
+            res.json({error: true, msg: "Invalid Input"});
+        }
+    }
+
     try {
-        let result = await UserCollection.insertOne(req.body);
-        res.json({msg:result});
+        let result = await UserCollection.insertOne(newUser);
+        res.json({error: false, sid: result.insertedId});
     }
     catch (err) {
-        res.json({msg: "Error Try Again Later"});
+        res.json({error: true});
     }
 };
 
